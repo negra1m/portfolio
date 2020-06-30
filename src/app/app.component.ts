@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +7,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'portfolio';
+  background: any;
+  mousemove$: any;
+  constructor() { }
+
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(e) {
+    console.log(e);
+  }
 }
