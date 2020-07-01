@@ -1,0 +1,10 @@
+:host {
+    position: absolute;
+    width: 100vw;
+}
+
+app-title {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
