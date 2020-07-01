@@ -1,0 +1,35 @@
+h1, h2 {
+    font-family: earthorbiter;
+    color: white;
+    max-width: 600px;
+}
+h2 {
+    letter-spacing: 0.5rem;
+    text-align: center;
+    border: 1px solid ;
+}
+
+h1 {
+    letter-spacing: 1rem;
+    text-align: center;
+    -webkit-animation: glow 3s ease-in-out infinite alternate;
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 70px #ffffff;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #99b9ff;
+  }
+}
+
+@keyframes glow {
+    from {
+      text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 70px #ffffff;
+    }
+    to {
+      text-shadow: 0 0 20px #fff, 0 0 30px #99b9ff;
+    }
+}

@@ -1,5 +1,10 @@
-.test{
-    border: 1px solid white;
-    width: 200px;
-    height: 200px;
+:host {
+    position: absolute;
+    width: 100vw;
+}
+
+app-title {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }

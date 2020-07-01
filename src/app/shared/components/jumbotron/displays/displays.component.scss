@@ -1,0 +1,33 @@
+.left {
+    position: fixed;
+    left: 0px;
+    top: 10px;
+    filter: opacity(0.5);
+    height: 500px;
+}
+
+img {
+    filter: drop-shadow(5px 5px 7px rgba(255, 255, 255, 0.8));
+}
+
+.right {
+    position: fixed;
+    right: 0px;
+    top: 10px;
+    transform: scaleX(-1);
+    filter: opacity(0.5);
+    height: 500px;
+}
+
+.bottom {
+    position: fixed;
+    bottom: 30px;
+    filter: opacity(0.5);
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.bottom > img {
+    width: 500px;
+}

@@ -11,3 +11,8 @@ html {
     padding: 0;
     overflow: hidden;
   }
+
+  @font-face {
+    font-family: earthorbiter;
+    src: url(assets/fonts/earthorbiter.ttf) format("opentype");
+  }
