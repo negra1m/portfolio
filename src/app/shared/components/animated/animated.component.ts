@@ -20,11 +20,13 @@ export class AnimatedComponent implements AfterViewInit {
 
   private frameId: number = null;
 
-  constructor(private ngZone: NgZone) {}
+  constructor(private ngZone: NgZone) {
+  }
 
   ngAfterViewInit(): void {
     this.setUpThree();
     this.loadPlanet();
+    this.setupMovement();
   }
 
   private setUpThree() {
@@ -89,12 +91,6 @@ export class AnimatedComponent implements AfterViewInit {
   }
 
   public render(): void {
-    this.frameId = requestAnimationFrame(() => {
-      this.render();
-    });
-
-    this.planet.rotation.x += 0.0000001;
-    this.planet.rotation.y += 0.01;
     this.renderer.render(this.scene, this.camera);
   }
 
@@ -106,5 +102,34 @@ export class AnimatedComponent implements AfterViewInit {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(width, height);
+  }
+
+  setupMovement() {
+    // get all behaviuors from mouse movement
+    const clock = new THREE.Clock();
+
+    const tick = () => {
+      const time = clock.getElapsedTime();
+      this.planet.rotation.x += 0.0000001;
+      this.planet.rotation.y = time;
+      this.renderer.render(this.scene, this.camera);
+      window.requestAnimationFrame(tick);
+      };
+    tick();
+    const cursor = {
+      x: 0,
+      y: 0
+    };
+    window.addEventListener('mousemove', (event) => {
+      cursor.x = event.clientX / window.innerWidth - 0.5;
+      cursor.y = event.clientY / window.innerHeight - 0.5;
+      this.setCameraPosition(cursor);
+    });
+  }
+
+  private setCameraPosition(cursor: any) {
+    this.camera.position.x = cursor.x;
+    this.camera.position.y = -(cursor.y);
+    this.render();
   }
 }
