@@ -6,16 +6,15 @@
   height: 100vh;
 }
 
-.globe {
-    background: url("src/assets/img/mundi.png");
-    background-repeat: repeat-x;
-    background-color: rgb(0, 20, 110);
-    animation: rotation 50s linear infinite;
-    height: 200px;
-    width: 200px;
-    border-radius: 100%;
-    background-size: cover;
-}
+// .globe {
+//     background-repeat: repeat-x;
+//     background-color: rgb(0, 20, 110);
+//     animation: rotation 50s linear infinite;
+//     height: 200px;
+//     width: 200px;
+//     border-radius: 100%;
+//     background-size: cover;
+// }
 
 .globe:hover {
   box-shadow: 0px 0px 40px 8px rgb(0, 12, 54);
