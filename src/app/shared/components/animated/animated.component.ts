@@ -73,6 +73,7 @@ export class AnimatedComponent implements AfterViewInit {
       window.innerWidth / window.innerHeight,
       0.1,
       1000);
+    this.controls = new OrbitControls(this.camera, this.canvas);
     this.setUpSizesView(window.innerWidth, window.innerHeight);
   }
 
@@ -196,7 +197,6 @@ export class AnimatedComponent implements AfterViewInit {
     const tick = () => {
       const time = clock.getElapsedTime();
       window.requestAnimationFrame(tick);
-      this.controls.update();
       this.scene.children.forEach((element) => {
         if (element.type === 'Mesh') {
           element.rotation.x += 0.0000001;
@@ -204,12 +204,12 @@ export class AnimatedComponent implements AfterViewInit {
         }
       });
       this.renderer.render(this.scene, this.camera);
+      this.controls.update();
     };
     tick();
   }
 
   private setupControls() {
-    this.controls = new OrbitControls(this.camera, this.canvas);
     this.controls.enableDamping = true;
     this.controls.rotateSpeed = 2;
     this.controls.autoRotate = true;
@@ -217,5 +217,6 @@ export class AnimatedComponent implements AfterViewInit {
     this.controls.maxPolarAngle = Math.PI * 0.8;
     this.controls.minDistance = 1;
     this.controls.maxDistance = 10;
+    this.controls.update();
   }
 }
