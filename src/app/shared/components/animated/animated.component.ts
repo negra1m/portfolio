@@ -25,25 +25,29 @@ export class AnimatedComponent implements AfterViewInit {
   private planetsgeometry: THREE.SphereGeometry;
   private planet: THREE.Mesh;
   private controls;
+  private loader = new THREE.TextureLoader();
+
   constructor(private ngZone: NgZone) {
     this.planetgeometry = new THREE.SphereGeometry(
       0.5,
-      5000,
-      100,
-      0.001,
+      64,
+      64,
       6.28,
+      6.2855,
       0,
       3.14
     );
+    this.planetgeometry.computeBoundingSphere();
     this.planetsgeometry = new THREE.SphereGeometry(
       0.3,
-      5000,
-      100,
-      0.001,
+      64,
+      64,
       6.28,
+      6.2855,
       0,
       3.14
     );
+    this.planetsgeometry.computeBoundingSphere();
   }
 
   ngAfterViewInit(): void {
@@ -92,8 +96,8 @@ export class AnimatedComponent implements AfterViewInit {
       bumpMap: new THREE.TextureLoader().load('assets/img/earth-bump.jpg'),
       bumpScale: 0.05,
       specularMap: new THREE.TextureLoader().load('assets/img/earth-spec.jpg'),
+      // color: 0xffff00,
       specular: new THREE.Color('grey'),
-      alphaMap: new THREE.TextureLoader().load('assets/img/planet.jpg'),
     });
     this.planet = new THREE.Mesh(this.planetgeometry, material);
     this.planet.name = 'earth';
@@ -125,31 +129,24 @@ export class AnimatedComponent implements AfterViewInit {
   }
 
   loadPlanets() {
-    const planetsAmount = 10;
+    const planetsAmount = 9;
 
     const counter = [];
     for (let i = 1; i < planetsAmount; i++) {
-      const texture = new THREE.TextureLoader().load(
-        `assets/matcaps/${i}.jpg`
-      );
-      const material = new THREE.MeshMatcapMaterial({
-        map: texture,
-        bumpMap: new THREE.TextureLoader().load('assets/img/planet.jpg'),
-        bumpScale: 0.05,
-        alphaMap: new THREE.TextureLoader().load('assets/img/planet.jpg'),
+      const matcapTexture = this.loader.load(`assets/matcaps/${i}.png`);
+      const testMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture,
       });
-      const planet = new THREE.Mesh(this.planetsgeometry, material);
+      const planet = new THREE.Mesh(this.planetsgeometry, testMaterial);
       planet.position.x = Math.round(this.generateRandomNumber(-5, 5));
       planet.position.y = Math.round(this.generateRandomNumber(-2, 5));
       planet.position.z = this.generateRandomNumber();
-      planet.name = 'planet';
+      planet.name = `planet${i}`;
 
       // place planets far from earth
       if (
         counter.includes(planet.position.x) ||
         Math.abs(planet.position.x) < 3
       ) {
-        console.log(counter);
         planet.position.x += 3;
       }
       counter.push(planet.position.x);
@@ -170,8 +167,9 @@ export class AnimatedComponent implements AfterViewInit {
     // galaxy mesh
     const starMesh = new THREE.Mesh(starGeometry, starMaterial);
     starMesh.layers.set(1);
+    starMesh.name = 'defeituoso';
     this.scene.add(starMesh);
-
+    console.log('SCENE >>> ', this.scene);
     this.light = new THREE.AmbientLight(0xffffff, 0.6);
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x0ffffff, 0.3);
     this.scene.add(hemiLight);
