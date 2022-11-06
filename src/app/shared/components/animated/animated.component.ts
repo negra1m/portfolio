@@ -96,12 +96,10 @@ export class AnimatedComponent implements AfterViewInit {
       bumpMap: new THREE.TextureLoader().load('assets/img/earth-bump.jpg'),
       bumpScale: 0.05,
       specularMap: new THREE.TextureLoader().load('assets/img/earth-spec.jpg'),
-      // color: 0xffff00,
       specular: new THREE.Color('grey'),
     });
     this.planet = new THREE.Mesh(this.planetgeometry, material);
     this.planet.name = 'earth';
-
     this.scene.add(this.planet);
 
     this.ngZone.runOutsideAngular(() => {
@@ -129,14 +127,17 @@ export class AnimatedComponent implements AfterViewInit {
   }
 
   loadPlanets() {
-    const planetsAmount = 9;
-
+    const planetsAmount = 10;
     const counter = [];
     for (let i = 1; i < planetsAmount; i++) {
-      const matcapTexture = this.loader.load(`assets/matcaps/${i}.png`);
-      const testMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture,
+      const texture = new THREE.TextureLoader().load(
+        `assets/img/planet${i}.jpg`
+      );
+      const material = new THREE.MeshPhongMaterial({
+        map: texture,
       });
-      const planet = new THREE.Mesh(this.planetsgeometry, testMaterial);
+
+      const planet = new THREE.Mesh(this.planetsgeometry, material);
       planet.position.x = Math.round(this.generateRandomNumber(-5, 5));
       planet.position.y = Math.round(this.generateRandomNumber(-2, 5));
       planet.position.z = this.generateRandomNumber();
@@ -155,21 +156,7 @@ export class AnimatedComponent implements AfterViewInit {
   }
 
   private setLights() {
-    // TODO: solve why galaxy is not appearing
-    // galaxy geometry
-    const starGeometry = new THREE.SphereGeometry(0.3, 64, 64);
-    // galaxy material
-    const starMaterial = new THREE.MeshBasicMaterial({
-      map: new THREE.TextureLoader().load('../../../../assets/img/galaxy1.png'),
-      side: THREE.DoubleSide,
-      // transparent: true,
-    });
-    // galaxy mesh
-    const starMesh = new THREE.Mesh(starGeometry, starMaterial);
-    starMesh.layers.set(1);
-    starMesh.name = 'defeituoso';
-    this.scene.add(starMesh);
-    console.log('SCENE >>> ', this.scene);
+    this.scene.background = this.loader.load('assets/img/galaxy1.png');
     this.light = new THREE.AmbientLight(0xffffff, 0.6);
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x0ffffff, 0.3);
     this.scene.add(hemiLight);
