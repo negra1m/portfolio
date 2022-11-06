@@ -128,15 +128,14 @@ export class AnimatedComponent implements AfterViewInit {
     const planetsAmount = 10;
 
     const counter = [];
-    for (let i = 0; i < planetsAmount; i++) {
+    for (let i = 1; i < planetsAmount; i++) {
       const texture = new THREE.TextureLoader().load(
-        `assets/img/planet${i}.jpg`
+        `assets/matcaps/${i}.jpg`
       );
-      const material = new THREE.MeshPhongMaterial({
+      const material = new THREE.MeshMatcapMaterial({
         map: texture,
         bumpMap: new THREE.TextureLoader().load('assets/img/planet.jpg'),
         bumpScale: 0.05,
-        specular: new THREE.Color('grey'),
         alphaMap: new THREE.TextureLoader().load('assets/img/planet.jpg'),
       });
       const planet = new THREE.Mesh(this.planetsgeometry, material);
