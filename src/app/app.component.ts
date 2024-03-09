@@ -9,7 +9,4 @@ export class AppComponent {
   title = 'portfolio';
   clicked = false;
   constructor() { }
-
-
-
 }

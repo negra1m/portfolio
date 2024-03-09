@@ -4,28 +4,37 @@ import {
   AfterViewInit,
   ViewChild,
   NgZone,
-} from '@angular/core';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+} from "@angular/core";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 @Component({
-  selector: 'app-animated',
-  templateUrl: './animated.component.html',
-  styleUrls: ['./animated.component.scss'],
+  selector: "app-animated",
+  templateUrl: "./animated.component.html",
+  styleUrls: ["./animated.component.scss"],
 })
 export class AnimatedComponent implements AfterViewInit {
-  @ViewChild('rendererCanvas', { static: true })
+  @ViewChild("rendererCanvas", { static: true })
   public rendererCanvas: ElementRef<HTMLCanvasElement>;
   private canvas: HTMLCanvasElement;
   private renderer: THREE.WebGLRenderer;
-  private camera: THREE.PerspectiveCamera;
+  public camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera(
+    35,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
   private scene: THREE.Scene;
+  private mouse: THREE.Vector2;
   private light: THREE.AmbientLight;
   private planetgeometry: THREE.SphereGeometry;
   private planetsgeometry: THREE.SphereGeometry;
   private planet: THREE.Mesh;
   private controls;
   private loader = new THREE.TextureLoader();
+  private currentIntersect;
+  raycaster = new THREE.Raycaster();
+
 
   constructor(private ngZone: NgZone) {
     this.planetgeometry = new THREE.SphereGeometry(
@@ -48,6 +57,11 @@ export class AnimatedComponent implements AfterViewInit {
       3.14
     );
     this.planetsgeometry.computeBoundingSphere();
+    this.mouse = new THREE.Vector2();
+    window.addEventListener("mousemove", (event) => {
+      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -72,12 +86,8 @@ export class AnimatedComponent implements AfterViewInit {
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x000000);
     // renderer.setClearColor(0x000000, 0.0);
-    this.camera = new THREE.PerspectiveCamera(
-      35,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000);
     this.controls = new OrbitControls(this.camera, this.canvas);
+    console.log(this.camera);
     this.setUpSizesView(window.innerWidth, window.innerHeight);
   }
 
@@ -89,28 +99,28 @@ export class AnimatedComponent implements AfterViewInit {
 
   loadPlanet() {
     const texture = new THREE.TextureLoader().load(
-      'assets/img/earth-texture.jpg'
+      "assets/img/earth-texture.jpg"
     );
     const material = new THREE.MeshPhongMaterial({
       map: texture,
-      bumpMap: new THREE.TextureLoader().load('assets/img/earth-bump.jpg'),
+      bumpMap: new THREE.TextureLoader().load("assets/img/earth-bump.jpg"),
       bumpScale: 0.05,
-      specularMap: new THREE.TextureLoader().load('assets/img/earth-spec.jpg'),
-      specular: new THREE.Color('grey'),
+      specularMap: new THREE.TextureLoader().load("assets/img/earth-spec.jpg"),
+      specular: new THREE.Color("grey"),
     });
     this.planet = new THREE.Mesh(this.planetgeometry, material);
-    this.planet.name = 'earth';
+    this.planet.name = "earth";
+    // this.planet.callback =
     this.scene.add(this.planet);
-
     this.ngZone.runOutsideAngular(() => {
-      if (document.readyState !== 'loading') {
+      if (document.readyState !== "loading") {
         this.render();
       } else {
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener("DOMContentLoaded", () => {
           this.render();
         });
       }
-      window.addEventListener('resize', () => {
+      window.addEventListener("resize", () => {
         this.resize();
       });
     });
@@ -156,7 +166,7 @@ export class AnimatedComponent implements AfterViewInit {
   }
 
   private setLights() {
-    this.scene.background = this.loader.load('assets/img/galaxy1.png');
+    this.scene.background = this.loader.load("assets/img/galaxy1.png");
     this.light = new THREE.AmbientLight(0xffffff, 0.6);
     const hemiLight = new THREE.HemisphereLight(0xffffff, 0x0ffffff, 0.3);
     this.scene.add(hemiLight);
@@ -184,9 +194,25 @@ export class AnimatedComponent implements AfterViewInit {
       this.scene.children.forEach((element) => {
         if (element.type === 'Mesh') {
           element.rotation.x += 0.0000001;
-          element.rotation.y = 0.2 * time;
+          element.rotation.y = 0.0002 * time;
         }
       });
+      // const pointer = new THREE.Vector2();
+      
+
+      // if (intersects.length) {
+      //   if (!this.currentIntersect) {
+      //     console.log('mouse enter', intersects);
+      //   }
+
+      //   this.currentIntersect = intersects[0];
+      // } else {
+      //   if (this.currentIntersect) {
+      //     console.log('mouse leave');
+      //   }
+
+      //   this.currentIntersect = null;
+      // }
       this.renderer.render(this.scene, this.camera);
       this.controls.update();
     };
@@ -202,5 +228,33 @@ export class AnimatedComponent implements AfterViewInit {
     this.controls.minDistance = 1;
     this.controls.maxDistance = 10;
     this.controls.update();
+    window.addEventListener("click", () => {
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      this.changeZoomByPlanetClicked(
+        this.raycaster.intersectObjects(this.scene.children)
+      );
+    });
+  }
+
+  private changeZoomByPlanetClicked(intersecteds) {
+    for (const intersected of intersecteds) {
+      intersected ? this.currentIntersect = intersected : this.currentIntersect = null
+    }
+    // this.controls.target.copy( this.currentIntersect.position );
+    console.log(this.currentIntersect);
+
+    // this.camera.position.copy(this.currentIntersect.object.position);
+    // this.camera.lookAt(this.currentIntersect.object.position);
+    // this.camera.position.z = 4;
+    const cameraDirection = new THREE.Vector3();
+    this.camera.getWorldDirection(cameraDirection); // Obtém a direção da câmera
+    
+    // Define a nova posição da câmera de modo que o objeto esteja no centro da cena
+    const distanceToTarget = 10; // Distância desejada entre a câmera e o objeto
+    const newPosition = new THREE.Vector3();
+    newPosition.copy(this.currentIntersect.object.position).sub(cameraDirection.multiplyScalar(distanceToTarget));
+    this.camera.position.copy(newPosition);
+    this.controls.update()
+    // this.camera.position.set(this.currentIntersect.object.position.x, this.currentIntersect.object.position.y, this.currentIntersect.object.position.z)
   }
 }
