@@ -1,6 +1,6 @@
 # Portfolio
-First version without camera movements
-https://user-images.githubusercontent.com/19765227/158114470-b8e83e4a-c772-497a-a7c6-7a42abdfd410.mp4
+![image](https://github.com/user-attachments/assets/fbbffdec-e684-43a1-866e-ac0281054970)
+[https://portfolio-theta-rose.vercel.app/](https://portfolio-theta-rose.vercel.app/)
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.0.
 
